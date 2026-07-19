@@ -48,7 +48,7 @@ function getQiblaDirection(lat, lon)  {
 
 window.addEventListener('deviceorientationabsolute', (event) => {
   const heading = event.alpha; 
-  const rotation = -(qiblaBearing - heading + 360) % 360;
+  const rotation = -((qiblaBearing - heading + 360) % 360);
   document.getElementById('qibla-arrow').style.transform = `rotate(${rotation}deg)`;
 });
 
