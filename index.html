@@ -59,7 +59,7 @@ function handleOrientation(event) {
         heading = (360 - event.alpha) % 360;
     }
 
-    const rotation = (qiblaBearing - heading + 360) % 360;
+    const rotation = -((qiblaBearing - heading + 360) % 360);
     document.getElementById('qibla-arrow').style.transform = `rotate(${rotation}deg)`;
 }
 
