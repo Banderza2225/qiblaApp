@@ -21,10 +21,11 @@
 </head>
 <body>
     <img id="qibla-arrow" src="306629-200.png" style="width: 100px; transform-origin: center;">
+    <button id="enable-btn">Enable Compass</button>
     <div id="debug" style="position: fixed; bottom: 10px; left: 10px; background: white; padding: 10px; font-family: monospace;"></div>
 </body>
 <script>
-    qiblaBearing = 0;
+    let qiblaBearing = 0;
 
 navigator.geolocation.getCurrentPosition(async(position) => {
     var lat = position.coords.latitude;
@@ -47,12 +48,38 @@ function getQiblaDirection(lat, lon)  {
   return (bearing + 360) % 360; 
 }
 
-window.addEventListener('deviceorientationabsolute', (event) => {
-  const heading = (360 - event.alpha) % 360; 
-  const rotation = (qiblaBearing - heading + 360) % 360;
-  document.getElementById('qibla-arrow').style.transform = `rotate(${rotation}deg)`;
-  document.getElementById('debug').innerText = 
-    `qibla: ${qiblaBearing.toFixed(1)} | heading: ${heading.toFixed(1)} | rotation: ${rotation.toFixed(1)}`;
+
+function handleOrientation(event) {
+    let heading;
+    if (event.webkitCompassHeading !== undefined) {
+       
+        heading = event.webkitCompassHeading;
+    } else {
+       
+        heading = (360 - event.alpha) % 360;
+    }
+
+    const rotation = (qiblaBearing - heading + 360) % 360;
+    document.getElementById('qibla-arrow').style.transform = `rotate(${rotation}deg)`;
+}
+
+document.getElementById('enable-btn').addEventListener('click', async () => {
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
+     
+        const response = await DeviceOrientationEvent.requestPermission();
+        if (response === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation);
+            document.getElementById('enable-btn').style.display = 'none';
+        } else {
+            alert('Permission denied.');
+        }
+    } else {
+        
+        window.addEventListener('deviceorientationabsolute', handleOrientation);
+        document.getElementById('enable-btn').style.display = 'none';
+    }
 });
+
 </script>
 </html>
