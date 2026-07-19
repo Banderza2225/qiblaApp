@@ -60,7 +60,7 @@ function handleOrientation(event) {
     }
 
     const rotation = (qiblaBearing - heading + 360) % 360;
-    document.getElementById('qibla-arrow').style.transform = `rotate(${rotation}deg)`;
+    document.getElementById('qibla-arrow').style.transform = `rotate(${rotation + 180}deg)`;
 }
 
 document.getElementById('enable-btn').addEventListener('click', async () => {
