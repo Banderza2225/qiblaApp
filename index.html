@@ -56,7 +56,7 @@ function handleOrientation(event) {
         heading = event.webkitCompassHeading;
     } else {
        
-        heading =  event.alpha;
+        heading = (360 - event.alpha) % 360;
     }
 
     const rotation = (qiblaBearing - heading + 360) % 360;
