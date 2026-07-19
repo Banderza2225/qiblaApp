@@ -50,20 +50,41 @@ function getQiblaDirection(lat, lon)  {
 
 
 function handleOrientation(event) {
-    let heading;
-    if (event.webkitCompassHeading !== undefined) {
-       
+    let heading = null;
+
+    
+    if (typeof event.webkitCompassHeading === "number") {
         heading = event.webkitCompassHeading;
-    } else {
-       
+
+        
+            (screen.orientation && screen.orientation.angle) ??
+            window.orientation ??
+            0;
+
+        heading = (heading + screenAngle) % 360;
+    }
+   
+    else if (event.absolute === true && event.alpha !== null) {
         heading = (360 - event.alpha) % 360;
+    }
+    else {
+        return;
     }
 
     const rotation = (qiblaBearing - heading + 360) % 360;
-    document.getElementById('qibla-arrow').style.transform = `rotate(${rotation }deg)`;
 
-     document.getElementById('debug').innerText =
-        `qibla: ${qiblaBearing.toFixed(1)} | heading: ${heading.toFixed(1)} | rotation: ${rotation.toFixed(1)}`;
+    document.getElementById("qibla-arrow").style.transform =
+        `rotate(${rotation}deg)`;
+
+    document.getElementById("debug").innerText =
+`Qibla: ${qiblaBearing.toFixed(1)}
+Heading: ${heading.toFixed(1)}
+Compass: ${event.webkitCompassHeading}
+Accuracy: ${event.webkitCompassAccuracy}
+Alpha: ${event.alpha}
+Absolute: ${event.absolute}
+Screen: ${(screen.orientation && screen.orientation.angle) ?? window.orientation ?? 0}
+Rotation: ${rotation.toFixed(1)}`;
 }
 
 document.getElementById('enable-btn').addEventListener('click', async () => {
@@ -72,14 +93,16 @@ document.getElementById('enable-btn').addEventListener('click', async () => {
      
         const response = await DeviceOrientationEvent.requestPermission();
         if (response === 'granted') {
-            window.addEventListener('deviceorientation', handleOrientation);
+            window.addEventListener("deviceorientation", handleOrientation);
+           window.addEventListener("deviceorientationabsolute", handleOrientation);
             document.getElementById('enable-btn').style.display = 'none';
         } else {
             alert('Permission denied.');
         }
     } else {
         
-        window.addEventListener('deviceorientationabsolute', handleOrientation);
+       window.addEventListener("deviceorientationabsolute", handleOrientation);
+        window.addEventListener("deviceorientation", handleOrientation);
         document.getElementById('enable-btn').style.display = 'none';
     }
 });
