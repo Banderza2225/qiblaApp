@@ -61,6 +61,9 @@ function handleOrientation(event) {
 
     const rotation = (qiblaBearing - heading + 360) % 360;
     document.getElementById('qibla-arrow').style.transform = `rotate(${rotation + 180}deg)`;
+
+     document.getElementById('debug').innerText =
+        `qibla: ${qiblaBearing.toFixed(1)} | heading: ${heading.toFixed(1)} | rotation: ${rotation.toFixed(1)}`;
 }
 
 document.getElementById('enable-btn').addEventListener('click', async () => {
