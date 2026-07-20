@@ -52,18 +52,16 @@ function getQiblaDirection(lat, lon)  {
 function handleOrientation(event) {
     let heading = null;
 
-    
     if (typeof event.webkitCompassHeading === "number") {
         heading = event.webkitCompassHeading;
 
-        
+        const screenAngle =
             (screen.orientation && screen.orientation.angle) ??
             window.orientation ??
             0;
 
-        heading = (heading + screenAngle) % 360;
+        heading = (heading + screenAngle + 360) % 360;
     }
-   
     else if (event.absolute === true && event.alpha !== null) {
         heading = (360 - event.alpha) % 360;
     }
