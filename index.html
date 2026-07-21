@@ -53,16 +53,11 @@ function handleOrientation(event) {
     let heading = null;
 
     if (typeof event.webkitCompassHeading === "number") {
-        heading = event.webkitCompassHeading;
-
-        const screenAngle =
-            (screen.orientation && screen.orientation.angle) ??
-            window.orientation ??
-            0;
-
-        heading = (heading + screenAngle + 360) % 360;
+        // iPhone
+        heading = (event.webkitCompassHeading - 90 + 360) % 360;
     }
     else if (event.absolute === true && event.alpha !== null) {
+        // Android
         heading = (360 - event.alpha) % 360;
     }
     else {
@@ -81,10 +76,8 @@ Compass: ${event.webkitCompassHeading}
 Accuracy: ${event.webkitCompassAccuracy}
 Alpha: ${event.alpha}
 Absolute: ${event.absolute}
-Screen: ${(screen.orientation && screen.orientation.angle) ?? window.orientation ?? 0}
 Rotation: ${rotation.toFixed(1)}`;
 }
-
 document.getElementById('enable-btn').addEventListener('click', async () => {
     if (typeof DeviceOrientationEvent !== 'undefined' &&
         typeof DeviceOrientationEvent.requestPermission === 'function') {
